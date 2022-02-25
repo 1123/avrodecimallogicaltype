@@ -1,0 +1,12 @@
+{
+  "name": "transactions-sink",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "tasks.max": "1",
+    "topics": "transactions",
+    "connection.url": "jdbc:sqlite:/tmp/test.db",
+    "auto.create": "true",
+    "tasks": 1
+  }
+}

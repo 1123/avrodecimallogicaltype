@@ -1,0 +1,107 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.confluent.examples</groupId>
+  <artifactId>kafka-avro-decimal-test</artifactId>
+  <packaging>jar</packaging>
+  <version>7.0.1</version>
+
+  <organization>
+      <name>Confluent, Inc.</name>
+      <url>http://confluent.io</url>
+  </organization>
+  <url>http://confluent.io</url>
+  <description>
+     Kafka Avro Decimal test
+  </description>
+
+  <properties>
+    <!-- Keep versions as properties to allow easy modification -->
+    <java.version>8</java.version>
+    <gson.version>2.2.4</gson.version>
+    <!-- Maven properties for compilation -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>confluent</id>
+      <name>Confluent</name>
+      <url>https://packages.confluent.io/maven/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>confluent</id>
+      <url>https://packages.confluent.io/maven/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>  
+    <!-- Add the Kafka dependencies -->
+    <dependency>
+      <groupId>io.confluent</groupId>
+      <artifactId>kafka-avro-serializer</artifactId>
+      <version>7.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-clients</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+    <dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>slf4j-log4j12</artifactId>
+        <version>1.7.30</version>
+   </dependency>
+   <!-- Use a repackaged version of log4j with security patches. Default log4j v1.2 is a transitive dependency of slf4j-log4j12, but it is excluded in common/pom.xml -->
+    <dependency>
+        <groupId>io.confluent</groupId>
+        <artifactId>confluent-log4j</artifactId>
+        <version>1.2.17-cp2</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+          <configuration>
+              <source>11</source>
+              <target>11</target>
+              <compilerArgs>
+                  <arg>-Xlint:all</arg>
+              </compilerArgs>
+          </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.avro</groupId>
+        <artifactId>avro-maven-plugin</artifactId>
+        <version>1.10.1</version>
+        <executions>
+          <execution>
+          <phase>generate-sources</phase>
+          <goals>
+            <goal>schema</goal>
+          </goals>
+          <configuration>
+              <sourceDirectory>${project.basedir}/src/main/resources/avro/io/confluent/examples/decimalavrologicaltype</sourceDirectory>
+              <includes>
+                <include>Payment.avsc</include>
+              </includes>
+              <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
+              <enableDecimalLogicalType>true</enableDecimalLogicalType>
+          </configuration>
+        </execution>
+      </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

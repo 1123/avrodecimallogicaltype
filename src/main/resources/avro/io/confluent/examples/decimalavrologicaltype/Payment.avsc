@@ -1,0 +1,10 @@
+{
+ "namespace": "io.confluent.examples.decimalavrologicaltype",
+ "type": "record",
+ "name": "Payment",
+ "fields": [
+     {"name": "id", "type": "string"},
+     {"name": "amount", "type": "double"},
+     {"name": "decimalAmount", "type": { "type": "bytes", "logicalType": "decimal", "precision": 30, "scale": 9, "default": null } }
+ ]
+}

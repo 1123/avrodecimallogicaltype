@@ -1,0 +1,10 @@
+{
+  "name": "jdbc-balances-sink",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+    "topics": "balances",
+    "connection.url": "jdbc:sqlite:/tmp/test.db",
+    "auto.create": "true"
+  }
+}
