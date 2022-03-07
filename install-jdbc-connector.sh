@@ -1,1 +1,1 @@
- confluent-hub install confluentinc/kafka-connect-jdbc:10.3.2
+confluent-hub install confluentinc/kafka-connect-jdbc:10.3.2

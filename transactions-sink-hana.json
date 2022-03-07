@@ -1,0 +1,15 @@
+{
+  "name": "transactions-sink-hana",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "topics": "transactions",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "key.converter.schema.registry.url": "http://localhost:8081",
+    "value.converter.schema.registry.url": "http://localhost:8081",
+    "connection.url": "jdbc:sap://benedikt-ubuntu:39017/?encrypt=true&validateCertificate=false",
+    "connection.user": "SYSTEM",
+    "connection.password": "Sap-hana-s3cret",
+    "auto.create" : true
+  }
+}
