@@ -2,6 +2,9 @@ package io.confluent.examples.decimalavrologicaltype;
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import org.apache.avro.Conversions;
+import org.apache.avro.LogicalType;
+import org.apache.avro.LogicalTypes;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -20,12 +23,17 @@ public class SpecificProducerExample {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
 
+        Conversions.DecimalConversion decimalConversion = new Conversions.DecimalConversion();
         try (KafkaProducer<String, Payment> producer = new KafkaProducer<>(props)) {
             for (long i = 0; i < 10; i++) {
                 producer.send(
                     new ProducerRecord<>(
                         "transactions", "id-" + i,
-                        new Payment("id-" + i, 1000.00d, new BigDecimal("10.00"))
+                        new Payment(
+                                "id-" + i,
+                                1000.00d,
+                                decimalConversion.toBytes(new BigDecimal("1.45"), null, LogicalTypes.decimal(3,2))
+                        )
                     )
                 );
             }

@@ -3,6 +3,8 @@ package io.confluent.examples.decimalavrologicaltype;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
+import org.apache.avro.Conversions;
+import org.apache.avro.LogicalTypes;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -27,6 +29,7 @@ public class SpecificConsumerExample {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
 
+        Conversions.DecimalConversion decimalConversion = new Conversions.DecimalConversion();
         try (final KafkaConsumer<String, Payment> consumer = new KafkaConsumer<>(props)) {
             consumer.subscribe(Collections.singletonList("transactions"));
 
@@ -34,6 +37,7 @@ public class SpecificConsumerExample {
                 final ConsumerRecords<String, Payment> records = consumer.poll(Duration.ofSeconds(1));
                 for (final ConsumerRecord<String, Payment> record : records) {
                     System.out.printf("key = %s, value = %s%n", record.key(), record.value());
+                    System.out.println(decimalConversion.fromBytes(record.value().getDecimalAmount(), null, LogicalTypes.decimal(3,2)));
                 }
             }
 
