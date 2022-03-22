@@ -3,7 +3,6 @@ package io.confluent.examples.decimalavrologicaltype;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.avro.Conversions;
-import org.apache.avro.LogicalType;
 import org.apache.avro.LogicalTypes;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -32,7 +31,9 @@ public class SpecificProducerExample {
                         new Payment(
                                 "id-" + i,
                                 1000.00d,
-                                decimalConversion.toBytes(new BigDecimal("1.45"), null, LogicalTypes.decimal(3,2))
+                                // Make sure that the precision and scale specified below are the same as in the Avro Schema Definition file.
+                                // Otherwise the data will not be interpreted correctly by the JDBC Sink connector -- and by other applications as well.
+                                decimalConversion.toBytes(new BigDecimal("1.45"), null, LogicalTypes.decimal(30,9))
                         )
                     )
                 );
