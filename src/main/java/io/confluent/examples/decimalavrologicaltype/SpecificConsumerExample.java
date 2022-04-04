@@ -37,7 +37,7 @@ public class SpecificConsumerExample {
                 final ConsumerRecords<String, Payment> records = consumer.poll(Duration.ofSeconds(1));
                 for (final ConsumerRecord<String, Payment> record : records) {
                     System.out.printf("key = %s, value = %s%n", record.key(), record.value());
-                    System.out.println(decimalConversion.fromBytes(record.value().getDecimalAmount(), null, LogicalTypes.decimal(3,2)));
+                    //System.out.println(decimalConversion.fromBytes(record.value().getDecimalAmount(), null, LogicalTypes.decimal(3,2)));
                 }
             }
 

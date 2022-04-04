@@ -12,6 +12,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.math.BigDecimal;
 import java.util.Properties;
+import java.util.UUID;
 
 public class SpecificProducerExample {
 
@@ -23,20 +24,31 @@ public class SpecificProducerExample {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
 
         Conversions.DecimalConversion decimalConversion = new Conversions.DecimalConversion();
+        Payment p1 = new Payment(
+                UUID.randomUUID().toString(),
+                1000.00d,
+                // Make sure that the precision and scale specified below are the same as in the Avro Schema Definition file.
+                // Otherwise the data will not be interpreted correctly by the JDBC Sink connector -- and by other applications as well.
+                decimalConversion.toBytes(new BigDecimal("1.45"), null, LogicalTypes.decimal(30,9))
+        );
+        Payment p2 = new Payment(
+                UUID.randomUUID().toString(),
+                1000.00d,
+                null
+        );
+
+        /*
+        Payment p3 = Payment.newBuilder()
+                .setId(UUID.randomUUID().toString())
+                .setAmount(1000.00d)
+                .build();
+         */
+
         try (KafkaProducer<String, Payment> producer = new KafkaProducer<>(props)) {
             for (long i = 0; i < 10; i++) {
-                producer.send(
-                    new ProducerRecord<>(
-                        "transactions", "id-" + i,
-                        new Payment(
-                                "id-" + i,
-                                1000.00d,
-                                // Make sure that the precision and scale specified below are the same as in the Avro Schema Definition file.
-                                // Otherwise the data will not be interpreted correctly by the JDBC Sink connector -- and by other applications as well.
-                                decimalConversion.toBytes(new BigDecimal("1.45"), null, LogicalTypes.decimal(30,9))
-                        )
-                    )
-                );
+                producer.send(new ProducerRecord<>("transactions", (String) p1.getId(), p1));
+                producer.send(new ProducerRecord<>("transactions", (String) p2.getId(), p2));
+                //producer.send(new ProducerRecord<>("transactions", (String) p3.getId(), p2));
             }
             producer.flush();
         } catch (final SerializationException e) {
