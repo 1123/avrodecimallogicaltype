@@ -1,6 +1,5 @@
 package io.confluent.examples.decimalavrologicaltype;
 
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import org.apache.avro.Conversions;
@@ -22,7 +21,7 @@ public class SpecificConsumerExample {
     public static void main(final String[] args) {
         final Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
+        props.put("schema.registry.url", "http://localhost:8081");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "transactions");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -37,7 +36,11 @@ public class SpecificConsumerExample {
                 final ConsumerRecords<String, Payment> records = consumer.poll(Duration.ofSeconds(1));
                 for (final ConsumerRecord<String, Payment> record : records) {
                     System.out.printf("key = %s, value = %s%n", record.key(), record.value());
-                    //System.out.println(decimalConversion.fromBytes(record.value().getDecimalAmount(), null, LogicalTypes.decimal(3,2)));
+                    try {
+                        System.out.println(decimalConversion.fromBytes(record.value().getDecimalAmount(), null, LogicalTypes.decimal(3, 2)));
+                    } catch (Exception e) {
+                        System.err.println(e.getMessage());
+                    }
                 }
             }
 

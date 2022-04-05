@@ -1,6 +1,5 @@
 package io.confluent.examples.decimalavrologicaltype;
 
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.avro.Conversions;
 import org.apache.avro.LogicalTypes;
@@ -19,7 +18,7 @@ public class SpecificProducerExample {
     public static void main(final String[] args) {
         final Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
+        props.put("schema.registry.url", "http://localhost:8081");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
 
@@ -29,20 +28,13 @@ public class SpecificProducerExample {
                 1000.00d,
                 // Make sure that the precision and scale specified below are the same as in the Avro Schema Definition file.
                 // Otherwise the data will not be interpreted correctly by the JDBC Sink connector -- and by other applications as well.
-                decimalConversion.toBytes(new BigDecimal("1.45"), null, LogicalTypes.decimal(30,9))
+                decimalConversion.toBytes(new BigDecimal("1.457777777"), null, LogicalTypes.decimal(30,9))
         );
         Payment p2 = new Payment(
                 UUID.randomUUID().toString(),
                 1000.00d,
                 null
         );
-
-        /*
-        Payment p3 = Payment.newBuilder()
-                .setId(UUID.randomUUID().toString())
-                .setAmount(1000.00d)
-                .build();
-         */
 
         try (KafkaProducer<String, Payment> producer = new KafkaProducer<>(props)) {
             for (long i = 0; i < 10; i++) {
